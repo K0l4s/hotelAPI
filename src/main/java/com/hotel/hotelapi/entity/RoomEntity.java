@@ -13,17 +13,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table(name="room")
 public class RoomEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
-    @JoinColumn(name="branchid")
+    @JoinColumn(name = "branchId")
     private BranchEntity branch;
 
     private float aceage; //Thông số về diện tích
     private int floor; //Lầu Note: (0: Tầng G)
     private int number; //Số phòng
-    private String row; //Dãy (A hoặc B)
+    private String line; //Dãy (A hoặc B)
     private int size; //Số giường
 }

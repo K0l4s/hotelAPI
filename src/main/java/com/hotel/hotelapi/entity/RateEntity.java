@@ -13,11 +13,13 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table(name="rate")
 public class RateEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @ManyToOne
-    @JoinColumn(name="bookid")
+    @JoinColumn(name = "bookId")
     private BookEntity book;
 
     private int star; //1-5

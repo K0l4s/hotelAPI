@@ -14,18 +14,19 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table(name="account")
 public class AccountEntity implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name="customerid")
-    private CustomerEntity customerId;
+    @ManyToOne
+    @JoinColumn(name = "customerId")
+    private CustomerEntity customer;
 
     @Column(nullable = false)
     private String username;
     private String email;
     private String phoneNumber;
     private String password;
+    private String code;
 }

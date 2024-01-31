@@ -13,6 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table(name="branch")
 public class BranchEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

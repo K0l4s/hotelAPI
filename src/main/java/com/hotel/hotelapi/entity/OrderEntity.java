@@ -11,8 +11,9 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="order")
+@Table(name="orders")
 public class OrderEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -20,10 +21,10 @@ public class OrderEntity implements Serializable {
     private int number; //Số lượng dịch vụ order;
 
     @ManyToOne
-    @JoinColumn(name = "bookid")
+    @JoinColumn(name = "bookId")
     private BookEntity book;
 
     @ManyToOne
-    @JoinColumn(name="serviceid")
+    @JoinColumn(name="serviceId")
     private ServiceEntity service;
 }

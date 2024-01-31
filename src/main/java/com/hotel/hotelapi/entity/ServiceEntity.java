@@ -13,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Table(name="service")
 public class ServiceEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
