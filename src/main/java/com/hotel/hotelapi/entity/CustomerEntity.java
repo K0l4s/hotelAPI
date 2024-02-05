@@ -19,8 +19,11 @@ public class CustomerEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @ManyToOne
+    @JoinColumn(name="accountId")
+    private AccountEntity account;
 
+    @Column(nullable = false)
     private String fullName;
     private LocalDate dob;
-    private String phoneNo;
 }

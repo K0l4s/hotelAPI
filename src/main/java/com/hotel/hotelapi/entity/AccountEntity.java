@@ -19,14 +19,20 @@ public class AccountEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "customerId")
-    private CustomerEntity customer;
+//    @ManyToOne
+//    @JoinColumn(name = "customerId")
+//    private CustomerEntity customer;
 
     @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String email;
+    @Column(length = 12)
     private String phoneNumber;
+    @Column(nullable = false)
     private String password;
+    @Column(length=6,nullable = false)
     private String code;
+    private String loginCode;
+    private boolean isActive = false;
 }

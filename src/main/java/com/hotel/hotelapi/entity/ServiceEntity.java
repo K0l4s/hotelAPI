@@ -20,6 +20,7 @@ public class ServiceEntity implements Serializable {
 
     private String name;
     private double price;
+    private double salePercent; //Phan tram giam gia
     private String description;
     private String image;
 }
