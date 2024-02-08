@@ -27,6 +27,6 @@ public class AuthenticationController {
 
     @PostMapping("checkLogin")
     public boolean checkLogin(@RequestBody AuthenticationModel authenticationModel){
-        return true;
+        return accountService.checkLogin(authenticationModel);
     }
 }
