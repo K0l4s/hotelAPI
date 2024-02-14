@@ -44,7 +44,7 @@ public class RoomController {
         if(updateRoom!=null){
             return new Response(true, "Room is updated successfully!", updateRoom);
         }
-        return new Response(false, "Room is updated successfully!", null);
+        return new Response(false, "Room is not found!", null);
     }
 
     @DeleteMapping ("/{id}")

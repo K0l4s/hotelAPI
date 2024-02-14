@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 
 //Phần Auth Kiên đang làm, t chỉ tạo cái Model để tham khảo thử thui, nếu thấy có gì cần chỉnh sửa thì chỉnh giúp t
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class AccountModel {
-    private int id;
-    private String email;
-    private String password;
-    private String phone_number;
-    private String username;
+//    private int id;
+//    private String email;
+//    private String password;
+//    private String phone_number;
+//    private String username;
 }
