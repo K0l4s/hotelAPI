@@ -5,6 +5,7 @@ import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.service.IServiceService;
 import com.hotel.hotelapi.service.ServiceServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

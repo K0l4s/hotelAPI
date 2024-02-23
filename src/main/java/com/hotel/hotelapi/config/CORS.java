@@ -10,14 +10,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CORS implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("api/**")
+        registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:3000") // Cho phép yêu cầu từ nguồn này
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Cho phép phương thức nào
                 .allowedHeaders("Content-Type") // Cho phép các tiêu đề
                 .allowCredentials(true); // Cho phép chia sẻ cookie giữa các tên miền khác nhau
 //        Call API Quản Lý!
         registry.addMapping("**")
-                .allowedOrigins("http://localhost:3000") // Cho phép yêu cầu từ nguồn này
+                .allowedOrigins("http://localhost:3001") // Cho phép yêu cầu từ nguồn này
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Cho phép phương thức nào
                 .allowedHeaders("Content-Type") // Cho phép các tiêu đề
                 .allowCredentials(true); // Cho phép chia sẻ cookie giữa các tên miền khác nhau

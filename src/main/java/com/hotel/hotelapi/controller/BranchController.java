@@ -1,5 +1,4 @@
 package com.hotel.hotelapi.controller;
-
 import com.hotel.hotelapi.model.BranchModel;
 import com.hotel.hotelapi.model.Response;
 import com.hotel.hotelapi.service.BranchServiceImpl;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/branch")
