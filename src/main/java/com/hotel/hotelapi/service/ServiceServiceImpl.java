@@ -20,8 +20,8 @@ public class ServiceServiceImpl implements IServiceService {
     private ServiceRepository serviceRepository;
 
     @Override
-    public ServiceModel findById(int id) {
-        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findById(id);
+    public ServiceModel findByIdActive(int id) {
+        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findByIdAndIsDeletedFalse(id);
         if (serviceEntityOptional.isPresent()) {
             ServiceEntity serviceEntity = serviceEntityOptional.get();
             return modelMapper.map(serviceEntity, ServiceModel.class);
@@ -33,6 +33,14 @@ public class ServiceServiceImpl implements IServiceService {
     @Override
     public List<ServiceModel> findAll() {
         List<ServiceEntity> serviceEntities = serviceRepository.findAll();
+        return serviceEntities.stream()
+                .map(serviceEntity -> modelMapper.map(serviceEntity, ServiceModel.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ServiceModel> findAllActive() {
+        List<ServiceEntity> serviceEntities = serviceRepository.findAllByIsDeletedFalse();
         return serviceEntities.stream()
                 .map(serviceEntity -> modelMapper.map(serviceEntity, ServiceModel.class))
                 .collect(Collectors.toList());
@@ -68,7 +76,14 @@ public class ServiceServiceImpl implements IServiceService {
     }
 
     @Override
-    public void delete(int id) {
-        serviceRepository.deleteById(id);
+    public boolean softDelete(int id) {
+        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findById(id);
+        if (serviceEntityOptional.isPresent()) {
+            ServiceEntity serviceEntity = serviceEntityOptional.get();
+            serviceEntity.setDeleted(true);
+            serviceRepository.save(serviceEntity);
+            return true;
+        }
+        return false;
     }
 }

@@ -1,29 +1,19 @@
-package com.hotel.hotelapi.controller;
+package com.hotel.hotelapi.controller.admin;
 
 import com.hotel.hotelapi.model.Response;
 import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.service.IServiceService;
 import com.hotel.hotelapi.service.ServiceServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/service")
-public class ServiceController {
-
+@RequestMapping("/api/admin/service")
+public class AdminServiceController {
     @Autowired
     IServiceService service = new ServiceServiceImpl();
-    @GetMapping("/{id}")
-    public Response getServiceById(@PathVariable int id) {
-        ServiceModel serviceModel = service.findById(id);
-        if (serviceModel != null) {
-            return new Response(true, "Service found successfully!", serviceModel);
-        }
-        return new Response(false, "Service not found!", null);
-    }
 
     @GetMapping("/all")
     public Response getAllServices() {
@@ -48,7 +38,10 @@ public class ServiceController {
 
     @DeleteMapping("/{id}")
     public Response deleteService(@PathVariable int id) {
-        service.delete(id);
-        return new Response(true, "Service deleted successfully", null);
+        boolean isDeleted = service.softDelete(id);
+        if (isDeleted) {
+            return new Response(true, "Service deleted successfully", null);
+        }
+        return new Response(false, "Service not found", null);
     }
 }

@@ -4,9 +4,10 @@ import com.hotel.hotelapi.model.ServiceModel;
 import java.util.List;
 
 public interface IServiceService {
-    ServiceModel findById(int id);
+    ServiceModel findByIdActive(int id);
     List<ServiceModel> findAll();
+    List<ServiceModel> findAllActive();
     ServiceModel create(ServiceModel serviceModel);
     ServiceModel update(int id, ServiceModel serviceDTO);
-    void delete(int id);
+    boolean softDelete(int id);
 }

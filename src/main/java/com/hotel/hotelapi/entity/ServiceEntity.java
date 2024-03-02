@@ -23,4 +23,5 @@ public class ServiceEntity implements Serializable {
     private double salePercent; //Phan tram giam gia
     private String description;
     private String image;
+    private boolean isDeleted;
 }
