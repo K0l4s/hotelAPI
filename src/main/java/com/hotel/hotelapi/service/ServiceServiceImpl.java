@@ -5,6 +5,10 @@ import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.repository.ServiceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,11 +35,34 @@ public class ServiceServiceImpl implements IServiceService {
     }
 
     @Override
+    public ServiceModel findById(int id) {
+        ServiceEntity serviceEntity = serviceRepository.findById(id).orElse(null);
+        return serviceEntity != null ? modelMapper.map(serviceEntity, ServiceModel.class) : null;
+    }
+
+    @Override
     public List<ServiceModel> findAll() {
         List<ServiceEntity> serviceEntities = serviceRepository.findAll();
         return serviceEntities.stream()
                 .map(serviceEntity -> modelMapper.map(serviceEntity, ServiceModel.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ServiceModel> findAllActiveAndSearch(String searchName, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page <ServiceEntity> activeServices = null;
+
+        if (!searchName.isEmpty()) {
+            activeServices = serviceRepository.findByNameContainingIgnoreCaseAndIsDeletedFalse(searchName, pageable);
+        }
+        else {
+            activeServices = serviceRepository.findAllByIsDeletedFalse(pageable);
+        }
+        return activeServices.map(serviceEntity -> modelMapper.map(serviceEntity, ServiceModel.class));
     }
 
     @Override
@@ -55,7 +82,7 @@ public class ServiceServiceImpl implements IServiceService {
 
     @Override
     public ServiceModel update(int id, ServiceModel serviceModel) {
-        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findById(id);
+        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findByIdAndIsDeletedFalse(id);
         if (serviceEntityOptional.isPresent()) {
             ServiceEntity serviceEntity = serviceEntityOptional.get();
 
@@ -77,7 +104,7 @@ public class ServiceServiceImpl implements IServiceService {
 
     @Override
     public boolean softDelete(int id) {
-        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findById(id);
+        Optional<ServiceEntity> serviceEntityOptional = serviceRepository.findByIdAndIsDeletedFalse(id);
         if (serviceEntityOptional.isPresent()) {
             ServiceEntity serviceEntity = serviceEntityOptional.get();
             serviceEntity.setDeleted(true);

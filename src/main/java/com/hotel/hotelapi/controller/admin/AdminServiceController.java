@@ -16,9 +16,35 @@ public class AdminServiceController {
     IServiceService service = new ServiceServiceImpl();
 
     @GetMapping("/all")
-    public Response getAllServices() {
-        List<ServiceModel> serviceModels = service.findAll();
+    public Response getAllServices(
+            @RequestParam(value = "showDisabled", required = false, defaultValue = "false") boolean showDisabled
+    ) {
+        List<ServiceModel> serviceModels;
+        if (showDisabled) {
+            serviceModels = service.findAll();
+        }
+        else {
+            serviceModels = service.findAllActive();
+        }
         return new Response(true, "Services found successfully!", serviceModels);
+    }
+
+    @GetMapping("/{id}")
+    public Response getServiceById(
+            @PathVariable int id,
+            @RequestParam(value = "showDisabled", required = false, defaultValue = "false") boolean showDisabled) {
+        ServiceModel serviceModel;
+        if (!showDisabled) {
+            serviceModel = service.findByIdActive(id);
+        }
+        else {
+            serviceModel = service.findById(id);
+        }
+
+        if (serviceModel != null) {
+            return new Response(true, "Service found successfully!", serviceModel);
+        }
+        return new Response(false, "Service not found!", null);
     }
 
     @PostMapping("/create")
