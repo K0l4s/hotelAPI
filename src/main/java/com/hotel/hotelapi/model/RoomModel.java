@@ -18,4 +18,5 @@ public class RoomModel {
     private int number; //Số phòng
     private String line; //Dãy (A hoặc B)
     private int size; //Số giường
+    private boolean isDeleted;
 }

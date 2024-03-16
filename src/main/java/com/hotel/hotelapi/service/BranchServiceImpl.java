@@ -1,10 +1,12 @@
 package com.hotel.hotelapi.service;
 
 import com.hotel.hotelapi.entity.BranchEntity;
+import com.hotel.hotelapi.entity.RoomEntity;
 import com.hotel.hotelapi.entity.ServiceEntity;
 import com.hotel.hotelapi.model.BranchModel;
 import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.repository.BranchRepository;
+import com.hotel.hotelapi.repository.RoomRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,15 +22,26 @@ public class BranchServiceImpl implements IBranchService{
 
     @Autowired
     private BranchRepository branchRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
     @Override
-    public BranchModel findById(int id) {
-        BranchEntity branchEntity = branchRepository.findById(id).orElse(null);
+    public BranchModel findByIdActive(int id) {
+        BranchEntity branchEntity = branchRepository.findByIdAndIsDeletedFalse(id).orElse(null);
         return branchEntity != null ? modelMapper.map(branchEntity, BranchModel.class) : null;
     }
 
     @Override
-    public BranchModel findByLocation(String location) {
-        BranchEntity branchEntity = branchRepository.findByLocation(location).orElse(null);
+    public List<BranchModel> findAllActive() {
+        List<BranchEntity> branchEntities = branchRepository.findAllByIsDeletedFalse();
+        return branchEntities.stream()
+                .map(branchEntity -> modelMapper.map(branchEntity, BranchModel.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public BranchModel findById(int id) {
+        BranchEntity branchEntity = branchRepository.findById(id).orElse(null);
         return branchEntity != null ? modelMapper.map(branchEntity, BranchModel.class) : null;
     }
 
@@ -69,7 +82,23 @@ public class BranchServiceImpl implements IBranchService{
     }
 
     @Override
-    public void delete(int id) {
-        branchRepository.deleteById(id);
+    public boolean softDelete(int id) {
+        Optional<BranchEntity> branchEntityOptional = branchRepository.findById(id);
+        if(branchEntityOptional.isPresent()){
+            BranchEntity branchEntity = branchEntityOptional.get();
+            branchEntity.setDeleted(true);
+            branchRepository.save(branchEntity);
+
+            // Tìm tất cả các RoomEntity thuộc về BranchEntity này
+            List<RoomEntity> rooms = roomRepository.findAllByBranchIdAndIsDeletedFalse(id);
+            for (RoomEntity room : rooms) {
+                room.setDeleted(true);
+            }
+            // Lưu lại các thay đổi cho tất cả các RoomEntity
+            roomRepository.saveAll(rooms);
+
+            return true;
+        }
+        return false;
     }
 }

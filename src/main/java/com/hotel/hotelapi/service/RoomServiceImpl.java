@@ -28,6 +28,28 @@ public class RoomServiceImpl implements IRoomService {
     private BranchRepository branchRepository;
 
     @Override
+    public RoomModel findByIdActive(int id) {
+        RoomEntity roomEntity = roomRepository.findByIdAndIsDeletedFalse(id).orElse(null);
+        return roomEntity != null ? modelMapper.map(roomEntity, RoomModel.class) : null;
+    }
+
+    @Override
+    public List<RoomModel> findAllActive() {
+        List<RoomEntity> roomEntities = roomRepository.findAllByIsDeletedFalse();
+        return roomEntities.stream()
+                .map(roomEntity -> modelMapper.map(roomEntity, RoomModel.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RoomModel> findAllByBranchID(int branchId) {
+        List<RoomEntity> roomEntities = roomRepository.findAllByBranchIdAndIsDeletedFalse(branchId);
+        return roomEntities.stream()
+                .map(roomEntity -> modelMapper.map(roomEntity, RoomModel.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public RoomModel findById(int id) {
         RoomEntity roomEntity = roomRepository.findById(id).orElse(null);
         return roomEntity != null ? modelMapper.map(roomEntity, RoomModel.class) : null;
@@ -58,22 +80,6 @@ public class RoomServiceImpl implements IRoomService {
             roomEntity.setAceage(RoomDTO.getAceage());
             roomEntity.setLine(RoomDTO.getLine());
             roomEntity.setBranch(RoomDTO.getBranch());
-
-// BỎ         BranchEntity branchEntity = roomEntity.getBranch();
-//            branchEntity.setId(RoomDTO.getBranch().getId());
-//
-//            roomEntity.setBranch(branchEntity);
-
-
-//            int branchid = RoomDTO.getBranch().getId();
-//            BranchEntity branchEntity = branchRepository.findById(branchid)
-//                    .orElseThrow(() -> new EntityNotFoundException("Branch with ID " + branchid + "is not found"));
-//
-//            //Map BranchEntity to BranchModel and set it in the RoomModel
-//            BranchModel branchModel = modelMapper.map(branchEntity, BranchModel.class);
-//            RoomDTO.setBranch(branchModel);
-
-//            //Save RoomEntity and map to RoomModel
                 RoomEntity updatedRoomEntity = roomRepository.save(roomEntity);
                 return modelMapper.map(updatedRoomEntity, RoomModel.class);
 
@@ -83,7 +89,14 @@ public class RoomServiceImpl implements IRoomService {
     }
 
     @Override
-    public void delete(int id) {
-        roomRepository.deleteById(id);
+    public boolean softDelete(int id) {
+        Optional<RoomEntity> roomEntityOptional = roomRepository.findById(id);
+        if(roomEntityOptional.isPresent()){
+            RoomEntity roomEntity = roomEntityOptional.get();
+            roomEntity.setDeleted(true);
+            roomRepository.save(roomEntity);
+            return true;
+        }
+        return false;
     }
 }

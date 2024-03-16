@@ -11,4 +11,5 @@ public class BranchModel {
     private int id;
     private String location;
     private String image;
+    private boolean isDeleted;
 }
