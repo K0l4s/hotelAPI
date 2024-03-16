@@ -53,6 +53,13 @@ public class ServiceServiceImpl implements IServiceService {
     public PageResponse<ServiceModel> findAllActiveAndSearch(String searchName, int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
                 Sort.by(sortBy).descending();
+
+        if (pageNo < 1) {
+            pageNo = 0;
+        }
+        else {
+            pageNo--;
+        }
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 
         Page <ServiceEntity> activeServices = null;
@@ -67,7 +74,7 @@ public class ServiceServiceImpl implements IServiceService {
         List<ServiceModel> content = activeServices.map(serviceEntity ->
                 modelMapper.map(serviceEntity, ServiceModel.class)).getContent();
 
-        int currentPage = activeServices.getNumber();
+        int currentPage = activeServices.getNumber() + 1;
         int totalPages = activeServices.getTotalPages();
 
         return new PageResponse<>(content, currentPage, totalPages);
