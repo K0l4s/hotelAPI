@@ -1,5 +1,6 @@
 package com.hotel.hotelapi.controller.user;
 
+import com.hotel.hotelapi.model.PageResponse;
 import com.hotel.hotelapi.model.Response;
 import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.service.IServiceService;
@@ -32,8 +33,10 @@ public class UserServiceController {
             @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
     ) {
-        Page<ServiceModel> serviceModels = service.findAllActiveAndSearch(searchName, pageNo, pageSize, sortBy, sortDir);
-        return !serviceModels.isEmpty() ? new Response(true, "Services found successfully!", serviceModels.getContent())
-                : new Response(false, "Services not found!", null);
+        PageResponse<ServiceModel> pageResponse = service.findAllActiveAndSearch(searchName, pageNo, pageSize, sortBy, sortDir);
+        if (pageResponse.getContent().isEmpty()) {
+            return new Response(false, "Services not found!", null);
+        }
+        return new Response(true, "Service found successfully!", pageResponse);
     }
 }

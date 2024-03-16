@@ -1,5 +1,6 @@
 package com.hotel.hotelapi.service;
 
+import com.hotel.hotelapi.model.PageResponse;
 import com.hotel.hotelapi.model.ServiceModel;
 import org.springframework.data.domain.Page;
 
@@ -13,5 +14,5 @@ public interface IServiceService {
     ServiceModel create(ServiceModel serviceModel);
     ServiceModel update(int id, ServiceModel serviceDTO);
     boolean softDelete(int id);
-    Page<ServiceModel> findAllActiveAndSearch(String searchName, int pageNo, int pageSize, String sortBy, String sortDir);
+    PageResponse<ServiceModel> findAllActiveAndSearch(String searchName, int pageNo, int pageSize, String sortBy, String sortDir);
 }

@@ -1,6 +1,7 @@
 package com.hotel.hotelapi.service;
 
 import com.hotel.hotelapi.entity.ServiceEntity;
+import com.hotel.hotelapi.model.PageResponse;
 import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.repository.ServiceRepository;
 import org.modelmapper.ModelMapper;
@@ -49,7 +50,7 @@ public class ServiceServiceImpl implements IServiceService {
     }
 
     @Override
-    public Page<ServiceModel> findAllActiveAndSearch(String searchName, int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PageResponse<ServiceModel> findAllActiveAndSearch(String searchName, int pageNo, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() :
                 Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
@@ -62,7 +63,14 @@ public class ServiceServiceImpl implements IServiceService {
         else {
             activeServices = serviceRepository.findAllByIsDeletedFalse(pageable);
         }
-        return activeServices.map(serviceEntity -> modelMapper.map(serviceEntity, ServiceModel.class));
+
+        List<ServiceModel> content = activeServices.map(serviceEntity ->
+                modelMapper.map(serviceEntity, ServiceModel.class)).getContent();
+
+        int currentPage = activeServices.getNumber();
+        int totalPages = activeServices.getTotalPages();
+
+        return new PageResponse<>(content, currentPage, totalPages);
     }
 
     @Override
