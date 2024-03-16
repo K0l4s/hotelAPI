@@ -17,18 +17,51 @@ public class AdminBranchController {
     IBranchService branchService = new BranchServiceImpl();
 
     @GetMapping("/{id}")
-    public Response getBranchById(@PathVariable int id){
-        Optional<BranchModel> optionalBranchModel = Optional.ofNullable(branchService.findById(id));
-
+    public Response getBranchById(
+            @PathVariable int id,
+            @RequestParam(value = "showDisabled", required = false, defaultValue = "false") boolean showDisabled,
+            @RequestParam(value = "showInActive", required = false, defaultValue = "false") boolean showInActive)
+    {
+        Optional<BranchModel> optionalBranchModel;
+        if(showDisabled){
+            optionalBranchModel = Optional.ofNullable(branchService.findById(id));
+        } else if (showInActive) {
+            optionalBranchModel = Optional.ofNullable(branchService.findByIdInactive(id));
+        } else {
+            optionalBranchModel = Optional.ofNullable(branchService.findByIdActive(id));
+        }
         return optionalBranchModel
                 .map(branchModel -> new Response(true, "Branch found successfully!", branchModel))
                 .orElse(new Response(false, "Branch not found!", null));
+
+//        Optional<BranchModel> optionalBranchModel = Optional.ofNullable(branchService.findById(id));
+//
+//        return optionalBranchModel
+//                .map(branchModel -> new Response(true, "Branch found successfully!", branchModel))
+//                .orElse(new Response(false, "Branch not found!", null));
     }
 
     @GetMapping("/all")
-    public Response getAllBranches(){
-        List<BranchModel> branchModelList = branchService.findAll();
-        return new Response(true, "Branches are found successfully!", branchModelList);
+    public Response getAllBranches(
+            @RequestParam(value = "showDisabled", required = false, defaultValue = "false") boolean showDisabled,
+            @RequestParam(value = "showInActive", required = false, defaultValue = "false") boolean showInActive)
+    {
+        List<BranchModel> branchModels;
+        if(showDisabled){
+            branchModels = branchService.findAll();
+        } else if (showInActive) {
+            branchModels = branchService.findAllInactive();
+        } else{
+            branchModels = branchService.findAllActive();
+        }
+
+        if (branchModels.isEmpty()) {
+            // Trả về Response với giá trị false nếu không có dữ liệu
+            return new Response(false, "No branches found!", null);
+        }
+        return new Response(true, "Branches are found successfully!", branchModels);
+//        List<BranchModel> branchModelList = branchService.findAll();
+//        return new Response(true, "Branches are found successfully!", branchModelList);
     }
 
     @PostMapping("/create")

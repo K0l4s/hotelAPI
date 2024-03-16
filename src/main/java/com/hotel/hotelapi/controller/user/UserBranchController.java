@@ -6,10 +6,8 @@ import com.hotel.hotelapi.model.ServiceModel;
 import com.hotel.hotelapi.service.BranchServiceImpl;
 import com.hotel.hotelapi.service.IBranchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,8 +27,17 @@ public class UserBranchController {
     }
 
     @GetMapping("/all")
-    public Response getAllActiveBranch(){
-        List<BranchModel> branchModel = branchService.findAllActive();
-        return new Response(true, "Branch is found successfully!", branchModel);
+    public Response getAllActiveBranch(
+            @RequestParam(value = "searchName", defaultValue = "", required = false) String searchName,
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    ){
+        Page<BranchModel> branchModels = branchService.findAllActiveAndSearch(searchName, pageNo, pageSize, sortBy, sortDir);
+        return !branchModels.isEmpty() ? new Response(true, "Services found successfully!", branchModels.getContent())
+                : new Response(false, "Services not found!", null);
+//        List<BranchModel> branchModel = branchService.findAllActive();
+//        return new Response(true, "Branch is found successfully!", branchModel);
     }
 }
